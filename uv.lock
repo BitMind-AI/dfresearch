@@ -740,7 +740,6 @@ name = "dfresearch"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "datasets" },
     { name = "decord" },
     { name = "einops" },
     { name = "gasbench" },
@@ -773,7 +772,6 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "datasets", specifier = ">=2.19.0" },
     { name = "decord", specifier = ">=0.6.0" },
     { name = "einops", specifier = ">=0.7.0" },
     { name = "gasbench", editable = "../gasbench" },

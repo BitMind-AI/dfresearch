@@ -76,9 +76,11 @@ def main():
     from dfresearch.models import get_model
     model = get_model("image", args.model, num_classes=2, pretrained=True, dropout=DROPOUT)
 
-    if FREEZE_BACKBONE and hasattr(model, "backbone"):
-        for param in model.backbone.parameters():
-            param.requires_grad = False
+    if FREEZE_BACKBONE:
+        backbone = getattr(model, "backbone", None) or getattr(model, "vision_model", None)
+        if backbone is not None:
+            for param in backbone.parameters():
+                param.requires_grad = False
 
     model = model.to(device)
     num_params = sum(p.numel() for p in model.parameters())
@@ -207,7 +209,6 @@ def main():
     from safetensors.torch import save_file
     from pathlib import Path
     import json
-    import shutil
     from datetime import datetime
     from export import generate_model_config, generate_model_py
 

@@ -42,7 +42,7 @@ def main():
     exp = subparsers.add_parser("export", help="Export model for competition")
     exp.add_argument("--modality", required=True, choices=["image", "video", "audio"])
     exp.add_argument("--model", required=True)
-    exp.add_argument("--weights", default=None)
+    exp.add_argument("--checkpoint-dir", default=None)
     exp.add_argument("--output-dir", default=None)
 
     args = parser.parse_args()
@@ -84,8 +84,8 @@ def main():
     elif args.command == "export":
         cmd = [sys.executable, str(PROJECT_ROOT / "export.py"),
                "--modality", args.modality, "--model", args.model]
-        if args.weights:
-            cmd.extend(["--weights", args.weights])
+        if args.checkpoint_dir:
+            cmd.extend(["--checkpoint-dir", args.checkpoint_dir])
         if args.output_dir:
             cmd.extend(["--output-dir", args.output_dir])
         subprocess.run(cmd, cwd=str(PROJECT_ROOT))

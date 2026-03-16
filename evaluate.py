@@ -17,7 +17,6 @@ import time
 from pathlib import Path
 
 import torch
-import numpy as np
 
 from prepare import (
     TARGET_IMAGE_SIZE,

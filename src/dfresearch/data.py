@@ -9,7 +9,6 @@ Dataset configs are pulled directly from BitMind-AI/gasbench at runtime,
 so they stay in sync with the competition benchmark datasets automatically.
 """
 
-import io
 import os
 import random
 import time
@@ -47,15 +46,6 @@ GASBENCH_CONFIG_CACHE = CACHE_DIR / "gasbench_configs"
 LOCAL_DATASETS_DIR = PROJECT_ROOT / "datasets"
 
 LABEL_MAP = {"real": 0, "synthetic": 1, "semisynthetic": 1}
-
-# Broadened column name detection for HuggingFace datasets
-IMAGE_COLUMNS = ("image", "img", "src_img", "photo", "base_image", "tgt_img",
-                 "file", "pixel_values", "input_image", "picture", "frame",
-                 "image1", "image2")
-VIDEO_COLUMNS = ("video", "video_bytes", "mp4", "clip", "video_file",
-                 "video_path", "content")
-AUDIO_COLUMNS = ("audio", "speech", "input_values", "waveform", "signal",
-                 "sound", "wav", "recording")
 
 # Default per-dataset sample cap when downloading for training.
 # gasbench configs don't have max_samples — this is a training-only setting.

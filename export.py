@@ -71,10 +71,10 @@ def generate_model_config(modality: str, model_name: str) -> dict:
 
 def generate_model_py(modality: str, model_name: str) -> str:
     """
-    Generate a standalone model.py for submission.
+    Return the model source file for submission.
 
-    This reads the original model source and appends only the load_model function
-    that gasbench requires, making it self-contained.
+    Each model module is already self-contained with a load_model() function,
+    so this just reads and returns the source file.
     """
     module_name = MODEL_MODULES[modality][model_name]
     module_path = Path("src") / module_name.replace(".", "/")
