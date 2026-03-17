@@ -211,6 +211,24 @@ LOOP FOREVER:
 - Try weighted pooling instead of mean pooling over time
 - Experiment with different spectrogram parameters for AST
 
+## When to transition to full training
+
+The 10-minute autoresearch loop is for finding the right configuration. Once you've plateaued, it's time for a full training run:
+
+**Signs you're ready:**
+- sn34_score has plateaued across 5+ consecutive experiments
+- You've found a model that scores >= 80% accuracy
+- Your "next ideas" list in STATE.md is getting thin
+- Small hyperparameter tweaks give diminishing returns
+
+When you think you've found the best configuration, tell the human. They can kick off a full run:
+
+```bash
+uv run train_full.py --modality {modality} --model {model_name} --hours 4 --max-samples 2000
+```
+
+This downloads more data (4x the exploration set), trains for hours instead of minutes, evaluates, and exports the model for competition. You don't need to run this — the human will.
+
 ## Competition context
 
 When you achieve a good sn34_score, the model can be exported for BitMind competition:

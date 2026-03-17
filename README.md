@@ -317,6 +317,7 @@ dfresearch/
 ├── train_image.py                     # Image training (agent modifies)
 ├── train_video.py                     # Video training (agent modifies)
 ├── train_audio.py                     # Audio training (agent modifies)
+├── train_full.py                      # Full production training launcher
 ├── evaluate.py                        # Evaluate a checkpoint
 ├── export.py                          # Export to gasbench ZIP format
 ├── analysis.ipynb                     # Experiment visualization
@@ -417,6 +418,60 @@ uv run prepare.py --verify --modality image  # your datasets show up here
 ```
 
 Each entry needs four fields: `name` (unique ID), `path` (HuggingFace repo), `modality`, and `media_type` (`real`, `synthetic`, or `semisynthetic`). See `datasets/README.md` for the full format and advanced options.
+
+## Two-phase workflow: Explore then Train
+
+dfresearch is designed around a **two-phase workflow**:
+
+### Phase 1: Explore (autoresearch loop, 10 min/experiment)
+
+Fast iteration to find the best architecture, hyperparameters, and augmentation strategy:
+
+```bash
+# Download small training set (500 samples/dataset, fast)
+uv run prepare.py --modality image
+
+# Let the agent run experiments — each takes ~10 minutes
+# See program.md for the full autonomous loop
+uv run train_image.py > run.log 2>&1
+```
+
+This is where the autoresearch loop shines. The agent tries ~6 experiments/hour, keeps improvements, discards failures, and builds up knowledge in `STATE.md`.
+
+### Phase 2: Full training (hours, using the best config found)
+
+Once the agent has found a good configuration, train for real:
+
+```bash
+# Train the best image model for 4 hours with 5x more data
+uv run train_full.py --modality image --hours 4 --max-samples 2000
+
+# Train specific model found during exploration
+uv run train_full.py --modality image --model clip-vit-l14 --hours 8 --max-samples 5000
+
+# Overnight video training
+uv run train_full.py --modality video --hours 12 --max-samples 3000
+
+# Just download more data first (no training)
+uv run train_full.py --modality audio --download-only --max-samples 5000
+
+# Train with data already cached
+uv run train_full.py --modality audio --hours 3 --skip-download
+```
+
+`train_full.py` handles the full pipeline in one command:
+1. Downloads more training data (default 2000/dataset vs 500 during exploration)
+2. Runs the training script with an extended time budget
+3. Evaluates the final model
+4. Exports to competition format (safetensors ZIP)
+
+All output is logged to `runs/full_{modality}_{timestamp}.log`.
+
+### When to switch from Phase 1 to Phase 2
+
+- sn34_score has plateaued across 5+ experiments — you've found the local optimum
+- You have a model scoring >= 80% accuracy (passes the entrance exam)
+- The agent's `STATE.md` shows clear winners and the "next ideas" list is getting thin
 
 ## Competition workflow
 
